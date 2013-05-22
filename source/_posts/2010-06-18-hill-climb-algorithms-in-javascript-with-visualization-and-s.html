@@ -1,0 +1,19 @@
+---
+layout: post
+title: Hill Climb Algorithms in Javascript with Visualization and Source
+date: 2010-06-18 22:47:00.000000000 -04:00
+comments: true
+categories: []
+published: true
+---
+<p><a href="http://en.wikipedia.org/wiki/Hill_climbing" target="_blank">Hill climb algorithms</a> are some of the simplest in artificial intelligence. A hill climb algorithm quickly finds a local maximum from a random starting position. I have developed a few variations of the basic algorithm in Javascript as well as a visualization tool to see how they work.</p>
+<p>. There are a few variations shown here, including:</p>
+<ul>
+<li> <strong>Steepest Ascent</strong>: heads in the direction of the greatest improvement over the current position.</li>
+<li> <strong>Random Restart</strong>: keeps trying random positions until there has been no improvement for several attempts.</li>
+</ul>
+<h3>Hill Climb Visualization</h3>
+<p>The perlin noise generation algorithms are taken from <a href="http://gist.github.com/304522">Sean McCullough.</a></p>
+<p><iframe src="/assets/tests/hill-climb/index.html" border="0" height="400" width="600"></iframe></p>
+<h3>Hill Climb Javascript Source Code</h3>
+<p>{% gist 444396 hillclimb.js %}</p>

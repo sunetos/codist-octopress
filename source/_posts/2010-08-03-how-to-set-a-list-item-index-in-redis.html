@@ -1,0 +1,19 @@
+---
+layout: post
+title: How to Set a List Item Index in Redis
+date: 2010-08-03 14:25:12.000000000 -04:00
+comments: true
+categories: []
+published: true
+---
+<p>I love <a href="http://redis.io/">Redis</a>, a unique "No SQL" database. One of the reasons it's so stable and efficient is that its creator, <a href="http://twitter.com/antirez">@antirez</a>, sticks to his guns and does not implement features that might encourage users to poorly use Redis. However, there is one such feature that I feel is crucial for a number of use cases that he refuses to implement since it is an O(N) operation: setting a list item index.</p>
+
+<p>The problem is that Redis "lists" are really misnamed. While internally they are implemented with linked lists, their intended use is actually a "deque" (double-ended queue). Choosing to call them "lists" has confused a number of users (including myself) whose application truly needs a proper list. Fortunately, Redis has one very powerful feature that can be used to fill in some of the shortcomings of the deque and make it closer to a proper list with good performance.</p>
+
+<p>This powerful feature is the pipeline, which allows you to queue up a sequence of commands which will be performed synchronously in a single call. If you combine a pipeline with a Redis mutex, you can achieve nearly atomic complex operations with only a few blocking network calls in your app.</p>
+
+<p>After some careful thought I was able to produce an algorithm that properly implements Redis list index manipulation using a single pipeline. It's as efficient as a linked list operation can be, O(N), iterating the list exactly twice for every call. This is quite reasonable for the use cases that need it, which is usually a UGC (user generated content) ordered list for a web app with only 10-20 items in it. Since it is implemented with a pipeline, it's the "next best thing" to Redis implementing the feature properly server-side.</p>
+
+<p>The source code is available as a gist of Python code. Porting to other languages should be quite trivial. Note that the code uses a rough mutex I threw together for this example; it is not bullet-proof for production use.</p>
+
+{% gist 506541 redis-list-index.py %}

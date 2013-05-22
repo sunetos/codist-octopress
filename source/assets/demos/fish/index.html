@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+	
+	<title>Adamia 3D Fish Demo</title>
+	
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.0.0/build/cssreset/reset-min.css"> 
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		#viewport {
+			background-color: #000000;
+			width: 400px;
+			height: 300px;
+			position: relative;
+			overflow: hidden;
+		}
+		#viewport div, #viewport img {
+			border: 0;
+			padding: 0;
+			margin: 0;
+		}
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../dist/curve3d.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		function do3d() {
+			var v = curve3d.init('viewport', c3d.RendererCss3);
+			var pauseBtn = $('#control-panel').find('input[name=c3d-pause]');
+			
+			var mesh = null;
+			var meshName = '';
+			var autoRot = true;
+			var camNode = new c3d.Node();
+			var meshContainer = new c3d.SceneNode();
+			meshContainer.moveTo(0, 0, 250);
+			
+			v.scene.addChild(camNode);
+			camNode.addChild(v.camera);
+			v.scene.addChild(meshContainer);
+				
+			c3d.MeshLoader.loadOBJ('piranha.obj', function(meshes) {
+				mesh = meshes[0];
+				mesh.shader.addTextureUrl('piranhaSkin.jpg');
+				//mesh.moveBy(0, 0, 5);
+				//mesh.scaleBy(250, 250, 250);
+				mesh.scaleBy(150, 150, 150);
+				mesh.moveTo(0, 0, 0);
+				//mesh.scaleBy(250, 250, 250);
+				meshContainer.addChild(mesh);
+				
+				var sprite = new c3d.Sprite();
+				sprite.scaleBy(250, 250, 250);
+				sprite.moveTo(0, 0, 500);
+				sprite.shader.addTextureUrl('http://www.google.com/intl/en_ALL/images/logo.gif');
+				meshContainer.addChild(sprite);
+				
+				v.play();
+				
+				//setTimeout(function() {mesh.debugUVs();}, 500);
+			});
+			
+			v.onTick(function(dt) {
+				if (mesh && autoRot) {
+					meshContainer.rotY(1.5*dt);
+					//mesh.rotY(1.5*dt);
+				}
+			});
+			
+			$('#render-options').find('input[name=c3d-projection]').click(function() {
+				var proj = $(this).val();
+				
+				v.camera.projection = (proj == 'persp') ? c3d.Render.Projection.PERSP : c3d.Render.Projection.ORTHO;
+				v.resize();
+			});
+			
+			pauseBtn.click(function() {
+				if (v.paused) {
+					v.play();
+				} else {
+					v.pause();
+				}
+			});
+			
+			setInterval(function() {
+				if (v.paused) {
+					pauseBtn.val('Unpause');
+				} else {
+					pauseBtn.val('Pause');
+				}
+			}, 50);
+			
+			 $('#viewport').mousemove(function(e){
+			      var pageCoords = "( " + e.pageX + ", " + e.pageY + " )";
+			      var clientCoords = "( " + e.clientX + ", " + e.clientY + " )";
+			      $("span:first").text("( e.pageX, e.pageY ) - " + pageCoords);
+			      $("span:last").text("( e.clientX, e.clientY ) - " + clientCoords);
+			 });
+			
+		}
+	</script>
+</head>
+<body>
+	<div id="viewport"></div>
+	<div id="render-options">
+		<input type="radio" name="c3d-projection" value="ortho" checked /> Orthographic<br/><br />
+		<input type="radio" name="c3d-projection" value="persp" /> Perspective<br/>
+	</div>
+	<div id="control-panel">
+		<input type="button" name="c3d-pause" value="Pause" />
+	</div>
+	<script type="text/javascript">
+		do3d();
+	</script>
+	<span>Move the mouse over the div.</span>
+    <span> </span>
+	
+	
+	
+	<div class="c3d-tri" style="position: absolute; border: 1px solid red; width: 50px; height: 50px; left: 500px; top: 500px;">
+		<div class="c3d-tri-unrot" style="position: absolute; width: 50px; height: 50px; left: 0; top: 0; filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=0.529919264, M12=0.848048096, M21=-0.848048096, M22=0.529919264); -webkit-transform-origin: top left; -webkit-transform: rotate(-45deg);">
+			<div class="c3d-tri-offset" style="position: absolute; width: 50px; height: 50px; left: -35.3553390593px; top: 0;">
+				<div class="c3d-tri-crop" style="overflow: hidden; position: absolute; width: 70.71067px; height: 35.355339px; left: 0; top: 0;">
+					<div class="c3d-tri-rot" style="position: absolute; width: 50px; height: 50px; left: 35.3553390593px; top: 0px; filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=0.7071067, M12=-0.7071067, M21=0.7071067, M22=0.7071067);  -webkit-transform-origin: top left; -webkit-transform: rotate(45deg);">
+						<div style="position: absolute; background-color: #0099AA; width: 50px; height: 50px; left: 0; top: 0;"></div>
+						<!-- <img src="piranhaSkin.jpg" class="c3d-tri-img" style="display: block; position: absolute; left: 0px; top: 0px; -webkit-transform-origin: center center; -moz-transform-origin: center center;  -webkit-transform: matrix(0.772598, -1.09254, -1.09254, 0.130866, -238.177, -93.3811);" /> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div class="c3d-tri" style="position: absolute; border: 1px solid red; width: 50px; height: 50px; left: 600px; top: 600px;">
+		<div class="c3d-tri-unrot" style="position: absolute; width: 70.71067px; height: 50px; left: -25px; top: -25px; filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=0.7071067, M12=0.7071067, M21=-0.7071067, M22=0.7071067); -webkit-transform-origin: top left; -webkit-transform: rotate(-45deg);">
+			<div class="c3d-tri-offset" style="position: absolute; width: 50px; height: 50px; left:0px; top: 0;">
+				<div class="c3d-tri-crop" style="overflow: hidden; position: absolute; width: 70.71067px; height: 35.355339px; left: 0; top: 0;">
+					<div class="c3d-tri-rot" style="position: absolute; width: 50px; height: 50px; left: 0px; top: 0px; filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=0.7071067, M12=-0.7071067, M21=0.7071067, M22=0.7071067);  -webkit-transform-origin: top left; -webkit-transform: rotate(45deg);">
+						<div style="position: absolute; background-color: #0099AA; width: 50px; height: 50px; left: 0; top: 0;"></div>
+						<!-- <img src="piranhaSkin.jpg" class="c3d-tri-img" style="display: block; position: absolute; left: 0px; top: 0px; -webkit-transform-origin: center center; -moz-transform-origin: center center;  -webkit-transform: matrix(0.772598, -1.09254, -1.09254, 0.130866, -238.177, -93.3811);" /> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+	
+		
+	
+
+</body>
+</html>
